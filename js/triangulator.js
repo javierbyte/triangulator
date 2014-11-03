@@ -1,14 +1,14 @@
 function triangulator(elem, params) {
+
     elem.style.opacity = .5;
 
     var canvas = elem;
     var ctx = canvas.getContext('2d');
 
-    var width = params.width || null;
-    var height = params.height || null;
     var algorithm = params.algorithm || 'fast';
+    var size = parseInt(params.size, 10);
 
-    var image_data; // saving for jsfeat
+    var image_data, width, height; // saving for jsfeat
 
     var image = new Image();
 
@@ -19,14 +19,19 @@ function triangulator(elem, params) {
     }
 
     image.onload = function() {
-        if (!width) width = (image.width * params.ratio) | 0;
-        if (!height) height = (image.height * params.ratio) | 0;
+        width = image.width;
+        height = image.height;
 
         var aspect = height / width;
 
-        if (width > 720) {
-            width = 720;
-            height = (width * aspect) | 0;
+        if (size) {
+            if (width > height) {
+                width = size;
+                height = (width * aspect) | 0;
+            } else {
+                height = size;
+                width = (height / aspect) | 0;
+            }
         }
 
         canvas.width = width;

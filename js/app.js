@@ -7,7 +7,6 @@ app.controller('MainCtrl', function($scope, $element, $attrs) {
 
     $scope.original = {
         image: 'img/base.jpg',
-        ratio: 1,
         algorithm: 'yape06',
 
         yapeLaplacian: 50,
@@ -18,6 +17,8 @@ app.controller('MainCtrl', function($scope, $element, $attrs) {
         fastTreshold: 15,
 
         rawImage: null,
+
+        size: 720
     };
 
     $scope.process = angular.copy($scope.original);
