@@ -43,9 +43,10 @@ h1 {
     background: #2980b9;
     color: #ecf0f1;
 }
-.header, .header h1{
+.header, .header h1 {
     height: 4rem;
-    line-height: 4rem;1
+    line-height: 4rem;
+    1
 }
 label {
     display: block;
@@ -60,9 +61,8 @@ input, select {
 #main {
     margin-left: 15em;
 }
-.top{
+.top {
     padding: 0 1em;
-    
 }
 .content {
     background: #ecf0f1;
@@ -99,7 +99,7 @@ input, select {
     background: #7f8c8d;
     color: #fff;
 }
-.btn-default:active {
+.button-default:active {
     background: #000;
 }
 .txt-big {

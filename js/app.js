@@ -35,16 +35,13 @@ app.controller('MainCtrl', function($scope, $element, $attrs) {
         triangulator(elem, $scope.process);
     };
 
-    /* UPLOAD */
     $scope.onFileSelect = function($files) {
-        //$files: an array of files selected, each file has name, size, and type.
         for (var i = 0; i < $files.length; i++) {
             var file = $files[i];
-            
+
             $scope.process.rawImage = file;
         }
     };
-    /* UPLOAD FINISHED */
 
     triangulator(elem, $scope.process);
 });
