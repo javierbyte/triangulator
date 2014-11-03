@@ -11,8 +11,8 @@ function triangulator(elem, params) {
     var image_data; // saving for jsfeat
 
     var image = new Image();
-    
-    if(params.rawImage) { 
+
+    if (params.rawImage) {
         image.src = URL.createObjectURL(params.rawImage);
     } else {
         image.src = params.image;
@@ -21,6 +21,13 @@ function triangulator(elem, params) {
     image.onload = function() {
         if (!width) width = (image.width * params.ratio) | 0;
         if (!height) height = (image.height * params.ratio) | 0;
+
+        var aspect = height / width;
+
+        if (width > 720) {
+            width = 720;
+            height = (width * aspect) | 0;
+        }
 
         canvas.width = width;
         canvas.height = height;
