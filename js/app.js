@@ -27,7 +27,7 @@ app.controller('MainCtrl', function($scope, $element, $attrs) {
         $scope.update(newVal);
     }, true);
 
-    $scope.reset = function reset() {
+    $scope.restart = function restart() {
         $scope.process = angular.copy($scope.original);
     };
 

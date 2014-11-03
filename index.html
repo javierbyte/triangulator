@@ -3,6 +3,7 @@
 
 <head>
     <title>Triangulator</title>
+    <meta charset="utf-8">
 
     <link rel="stylesheet" href="css/style.css">
 
@@ -52,20 +53,24 @@
                 </select>
 
                 <div class="txt-center">
-                    <a ng-click="reset()" class="button m-1x inline-block">Reset</a>
+                    <a ng-click="restart()" class="button m-1x inline-block">Restart</a>
                 </div>
             </form>
         </div>
     </nav>
 
     <main id="main">
-        <div class="p-1x">
-
+        <div class="content p-1x">
             <canvas ng-file-select="onFileSelect($files)" ng-file-drop="onFileSelect($files)" accept="image/*" id="delaunay" class="sh"></canvas>
 
             <div class="txt-center">
                 <a id="download" class="button m-1x inline-block txt-big">Download</a>
+                <div class="button m-1x inline-block txt-big button-default" ng-file-select="onFileSelect($files)" accept="image/*">Upload</div>
             </div>
+        </div>
+
+        <div class="footer p-1x">
+            Created by <a href="http://javierborquez.com/">Javier Bórquez</a>.
         </div>
     </main>
 

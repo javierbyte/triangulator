@@ -15,7 +15,7 @@ img, canvas {
     transition: opacity .3s;
 }
 body {
-    background: #ecf0f1;
+    background: #fff;
 }
 body, input, textarea, select, option, button {
     font: 16px/1.618'Lato', sans-serif;
@@ -53,12 +53,20 @@ input, select {
     width: 100%;
     padding: .5em;
 }
-
 #main {
     margin-left: 15em;
 }
-
-.button{
+.content {
+    background: #ecf0f1;
+}
+.footer{
+    color: #95a5a6;
+}
+.footer a{
+    color: #7f8c8d;
+}
+.button {
+    overflow: hidden;
     line-height: 1;
     background: #2980b9;
     color: #ecf0f1;
@@ -68,18 +76,27 @@ input, select {
     text-transform: uppercase;
     text-decoration: none;
 }
-.button:hover{
-    cursor:pointer;
+.button:hover {
+    cursor: pointer;
     background: #3498db;
 }
-.button:active{
+.button:active {
     background: #2c3e50;
 }
-
-.txt-big{
+.button-default{
+    background: #95a5a6;
+    color: #ecf0f1;
+}
+.button-default:hover{
+    background: #7f8c8d;
+    color: #fff;
+}
+.btn-default:active{
+    background: #000;
+}
+.txt-big {
     font-size: 1.25em;
 }
-
 .m-1x {
     margin: 1em;
 }
@@ -89,9 +106,9 @@ input, select {
 .sh {
     box-shadow: rgba(0, 0, 0, .1) 0 1px 0, rgba(0, 0, 0, .1) 0 1px 3px, rgba(0, 0, 0, .1) 0 2px 6px;
 }
-.inline-block{
+.inline-block {
     display: inline-block;
 }
-.txt-center{
+.txt-center {
     text-align: center;
 }
