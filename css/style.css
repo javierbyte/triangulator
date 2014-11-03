@@ -28,7 +28,7 @@ h1 {
     font-size: 1.5em;
     text-align: center;
 }
-/* LAYOUR */
+/* LAYOUT */
 
 #sidebar {
     width: 15em;
@@ -39,9 +39,13 @@ h1 {
     background: #2c3e50;
     text-shadow: rgba(0, 0, 0, .1) 0 -1px 0;
 }
-#sidebar .title {
+.title {
     background: #2980b9;
     color: #ecf0f1;
+}
+.header, .header h1{
+    height: 4rem;
+    line-height: 4rem;1
 }
 label {
     display: block;
@@ -56,13 +60,17 @@ input, select {
 #main {
     margin-left: 15em;
 }
+.top{
+    padding: 0 1em;
+    
+}
 .content {
     background: #ecf0f1;
 }
-.footer{
+.footer {
     color: #95a5a6;
 }
-.footer a{
+.footer a {
     color: #7f8c8d;
 }
 .button {
@@ -83,15 +91,15 @@ input, select {
 .button:active {
     background: #2c3e50;
 }
-.button-default{
+.button-default {
     background: #95a5a6;
     color: #ecf0f1;
 }
-.button-default:hover{
+.button-default:hover {
     background: #7f8c8d;
     color: #fff;
 }
-.btn-default:active{
+.btn-default:active {
     background: #000;
 }
 .txt-big {
