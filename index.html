@@ -2,121 +2,121 @@
 <html ng-app="Triangulator">
 
 <head>
-    <title>Triangulator | Delaunay triangulation image generator.</title>
-    <meta charset="utf-8">
+  <title>Triangulator | Delaunay triangulation image generator.</title>
+  <meta charset="utf-8">
 
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="favicon.ico">
 
-    <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 </head>
 
 <body ng-controller="MainCtrl">
 
-    <nav id="sidebar">
-        <div class="title header">
-            <h1>Triangulator</h1>
+  <nav id="sidebar">
+    <div class="title header">
+      <h1>Triangulator</h1>
+    </div>
+
+    <div class="section p-1x">
+      <form>
+        <label for="algorithmSelect">Algorithm:</label>
+        <select ng-model="process.algorithm" id="algorithmSelect">
+          <option value="yape06">YAPE06</option>
+          <option value="yape">YAPE</option>
+          <option value="fast">Fast Corners</option>
+        </select>
+
+        <div ng-if="process.algorithm === 'yape06'">
+          <label for="yapeLaplacianRange">Laplacian Range:</label>
+          <input type="range" min="1" max="100" step="1" ng-model="process.yapeLaplacian" id="yapeLaplacianRange">
+
+          <label for="yapeMineigenRange">Mineigen Range</label>
+          <input type="range" min="1" max="250" step="1" ng-model="process.yapeMineigen" id="yapeMineigenRange">
         </div>
 
-        <div class="section p-1x">
-            <form>
-                <label for="algorithmSelect">Algorithm:</label>
-                <select ng-model="process.algorithm" id="algorithmSelect">
-                    <option value="yape06">YAPE06</option>
-                    <option value="yape">YAPE</option>
-                    <option value="fast">Fast Corners</option>
-                </select>
-
-                <div ng-if="process.algorithm === 'yape06'">
-                    <label for="yapeLaplacianRange">Laplacian Range:</label>
-                    <input type="range" min="1" max="100" step="1" ng-model="process.yapeLaplacian" id="yapeLaplacianRange">
-
-                    <label for="yapeMineigenRange">Mineigen Range</label>
-                    <input type="range" min="1" max="250" step="1" ng-model="process.yapeMineigen" id="yapeMineigenRange">
-                </div>
-
-                <div ng-if="process.algorithm === 'yape'">
-                    <label for="yapeRadiusSelect">Radius:</label>
-                    <input type="range" min="1" max="10" step="1" ng-model="process.yapeRadius" id="yapeRadiusSelect">
-                </div>
-
-                <div ng-if="process.algorithm === 'fast'">
-                    <label for="fastTresholdRange">Treshold:</label>
-                    <input type="range" min="1" max="50" step=".5" ng-model="process.fastTreshold" id="fastTresholdRange">
-                </div>
-
-                <label for="sizeSelect">Image size:</label>
-                <select ng-model="process.size" id="sizeSelect">
-                    <option value=720>720p</option>
-                    <option value=1080>1080p</option>
-                    <option value=2160>2160p</option>
-                    <option value=0>Original</option>
-                </select>
-
-                <div class="txt-center">
-                    <a ng-click="restart()" class="button m-1x inline-block">Restart</a>
-                </div>
-            </form>
-        </div>
-    </nav>
-
-    <main id="main">
-        <div class="top header">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://javierborquez.com/lab/triangulator/" data-text="Triangulator" data-via="javierbyte">Tweet</a>
-            <script>
-            ! function(d, s, id) {
-                var js, fjs = d.getElementsByTagName(s)[0],
-                    p = /^http:/.test(d.location) ? 'http' : 'https';
-                if (!d.getElementById(id)) {
-                    js = d.createElement(s);
-                    js.id = id;
-                    js.src = p + '://platform.twitter.com/widgets.js';
-                    fjs.parentNode.insertBefore(js, fjs);
-                }
-            }(document, 'script', 'twitter-wjs');
-            </script>
+        <div ng-if="process.algorithm === 'yape'">
+          <label for="yapeRadiusSelect">Radius:</label>
+          <input type="range" min="1" max="10" step="1" ng-model="process.yapeRadius" id="yapeRadiusSelect">
         </div>
 
-        <div class="content p-1x">
-            <canvas ng-file-select="onFileSelect($files)" ng-file-drop="onFileSelect($files)" accept="image/*" id="delaunay" class="sh"></canvas>
-
-            <div class="txt-center">
-                <a id="download" class="button m-1x inline-block txt-big">Download</a>
-                <div class="button m-1x inline-block txt-big button-default" ng-file-select="onFileSelect($files)" accept="image/*">Upload</div>
-            </div>
+        <div ng-if="process.algorithm === 'fast'">
+          <label for="fastTresholdRange">Treshold:</label>
+          <input type="range" min="1" max="50" step=".5" ng-model="process.fastTreshold" id="fastTresholdRange">
         </div>
 
-        <div class="footer p-1x">
-            Delaunay triangulation image generator. Created by <a href="http://twitter.com/javierbyte">Javier Bórquez</a>.
+        <label for="sizeSelect">Image size:</label>
+        <select ng-model="process.size" id="sizeSelect">
+          <option value=720>720p</option>
+          <option value=1080>1080p</option>
+          <option value=2160>2160p</option>
+          <option value=0>Original</option>
+        </select>
+
+        <div class="txt-center">
+          <a ng-click="restart()" class="button m-1x inline-block">Restart</a>
         </div>
-    </main>
+      </form>
+    </div>
+  </nav>
 
-    <script src="js/angular-file-upload-shim.min.js"></script>
-    <script src="js/angular.min.js"></script>
-    <script src="js/angular-file-upload.min.js"></script>
+  <main id="main">
+    <div class="top header">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://javierborquez.com/lab/triangulator/" data-text="Triangulator" data-via="javierbyte">Tweet</a>
+      <script>
+      ! function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0],
+          p = /^http:/.test(d.location) ? 'http' : 'https';
+        if (!d.getElementById(id)) {
+          js = d.createElement(s);
+          js.id = id;
+          js.src = p + '://platform.twitter.com/widgets.js';
+          fjs.parentNode.insertBefore(js, fjs);
+        }
+      }(document, 'script', 'twitter-wjs');
+      </script>
+    </div>
 
-    <script src="js/jsfeat-min.js"></script>
-    <script src="js/delaunay.js"></script>
+    <div class="content p-1x">
+      <canvas ng-file-select="onFileSelect($files)" ng-file-drop="onFileSelect($files)" accept="image/*" id="delaunay" class="sh"></canvas>
 
-    <script src="js/triangulator.js"></script>
-    <script src="js/app.js"></script>
+      <div class="txt-center">
+        <a id="download" class="button m-1x inline-block txt-big">Download</a>
+        <div class="button m-1x inline-block txt-big button-default" ng-file-select="onFileSelect($files)" accept="image/*">Upload</div>
+      </div>
+    </div>
 
-    <script>
-    (function(i, s, o, g, r, a, m) {
-        i['GoogleAnalyticsObject'] = r;
-        i[r] = i[r] || function() {
-            (i[r].q = i[r].q || []).push(arguments)
-        }, i[r].l = 1 * new Date();
-        a = s.createElement(o),
-            m = s.getElementsByTagName(o)[0];
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m)
-    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+    <div class="footer p-1x">
+      Delaunay triangulation image generator. Created by <a href="http://twitter.com/javierbyte">Javier Bórquez</a>.
+    </div>
+  </main>
 
-    ga('create', 'UA-44329676-3', 'auto');
-    ga('send', 'pageview');
-    </script>
+  <script src="js/angular-file-upload-shim.min.js"></script>
+  <script src="js/angular.min.js"></script>
+  <script src="js/angular-file-upload.min.js"></script>
+
+  <script src="js/jsfeat-min.js"></script>
+  <script src="js/delaunay.js"></script>
+
+  <script src="js/triangulator.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+  ga('create', 'UA-44329676-3', 'auto');
+  ga('send', 'pageview');
+  </script>
 </body>
 
 </html>
