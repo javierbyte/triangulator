@@ -1,34 +1,38 @@
 const jsfeat = require('jsfeat')
+const SkinTracker = require('../../lib/handtracking.js')
 const _ = require('lodash')
 
 // detail settings
 const minScore = 1
-const maxPoints = 250
+const maxPoints = 300
 
-const yapeRadius = 2
+const yapeRadius = 1
 const pyramid_levels = 1
 
-const yapeLaplacian = 150
-const yapeMineigen = 200
+const yapeLaplacian = 80
+const yapeMineigen = 80
 
 // fast
-const fastTreshold = 20
+const fastTreshold = 25
+
+// random
+const randomStrenght = 38
 
 // head track
-const doHeadTrack = true
 const headTrackIterations = 25
 
-const algorithm = ['yape', 'random']
+const algorithm = ['face', 'yape', 'skin', 'random']
 
 const clm = require('../../lib/clmtrackr.js')
 const pModel = require('../../lib/model_pca_20_mosse.js')
 
 const getCornersFromImageData = function (ctx, canvas) {
   const {width, height} = canvas
-  const image_data = ctx.getImageData(0, 0, width, height).data
+  const ctxData = ctx.getImageData(0, 0, width, height)
+  const imageData = ctxData.data
 
   var img_u8 = new jsfeat.matrix_t(width, height, jsfeat.U8_t | jsfeat.C1_t)
-  jsfeat.imgproc.grayscale(image_data, width, height, img_u8)
+  jsfeat.imgproc.grayscale(imageData, width, height, img_u8)
 
   var corners = []
 
@@ -65,17 +69,16 @@ const getCornersFromImageData = function (ctx, canvas) {
     jsfeat.yape.detect(img_u8, corners, 0)
   }
 
-  console.log('\nOld length', corners.length, ' new length ', maxPoints)
   corners = _.chain(corners).sortBy('score').reverse().take(maxPoints).value()
 
   if (_.includes(algorithm, 'random')) {
-    const randomSegments = Math.floor(Math.sqrt(width * height) / 22)
+    const randomSegments = Math.floor(Math.sqrt(width * height) / randomStrenght)
 
     const steps = _.range(randomSegments)
     const stepWidth = width / randomSegments
     const stepHeight = height / randomSegments
 
-    corners = [corners, ..._.map(steps, (step) => {
+    corners = corners.concat(_.map(steps, (step) => {
       return _.map(steps, (innerStep) => {
         return {
           x: Math.round((step + 0.1 + Math.random() * 0.8) * stepWidth),
@@ -83,10 +86,28 @@ const getCornersFromImageData = function (ctx, canvas) {
           score: 1000
         }
       })
-    })]
+    }))
 
     corners = _.flatten(corners)
   }
+
+  if (_.includes(algorithm, 'skin')) {
+    console.log('\n START - SKIN ALGORITHM')
+    const tracker = new SkinTracker.Tracker()
+    const candidate = tracker.detect(ctxData)
+
+    if (candidate) {
+      corners = corners.concat(_.map(candidate.contour, (el) => {
+        return {
+          x: el.x,
+          y: el.y,
+          score: 1000
+        }
+      }))
+    }
+    console.log('\n END - SKIN ALGORITHM')
+  }
+
   console.log('\n END - FIND CORNER ALGORITHM JSFEAT')
 
   var cornerArray = [
@@ -108,9 +129,7 @@ const getCornersFromImageData = function (ctx, canvas) {
     [(width / 1.33) | 0, 0],
     [0, (height / 1.33) | 0],
     [width, (height / 1.33) | 0],
-    [(width / 1.33) | 0, height],
-
-    [width / 2 | 0, height / 2 | 0]
+    [(width / 1.33) | 0, height]
   ]
 
   let corner
@@ -118,7 +137,7 @@ const getCornersFromImageData = function (ctx, canvas) {
     if (corners[corner].score > minScore) cornerArray.push([corners[corner].x, corners[corner].y])
   }
 
-  if (doHeadTrack) {
+  if (_.includes(algorithm, 'face')) {
     console.log('\n START - HEAD TRACK')
     var ctracker = new clm.tracker()
     ctracker.init(pModel)
