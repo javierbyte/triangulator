@@ -1,30 +1,29 @@
 const jsfeat = require('jsfeat')
 const SkinTracker = require('../../lib/handtracking.js')
 const _ = require('lodash')
+const clm = require('../../lib/clmtrackr.js')
+const pModel = require('../../lib/model_pca_10_svm.js')
 
 // detail settings
 const minScore = 1
-const maxPoints = 300
+const maxPoints = 500
 
 const yapeRadius = 1
 const pyramid_levels = 1
 
-const yapeLaplacian = 80
-const yapeMineigen = 80
+const yapeLaplacian = 150
+const yapeMineigen = 50
 
 // fast
 const fastTreshold = 25
 
 // random
-const randomStrenght = 38
+const randomStrenght = 50
 
 // head track
-const headTrackIterations = 25
+const headTrackIterations = 100
 
-const algorithm = ['face', 'yape', 'skin', 'random']
-
-const clm = require('../../lib/clmtrackr.js')
-const pModel = require('../../lib/model_pca_20_mosse.js')
+const algorithm = ['yape', 'yape06', 'face', 'skin', 'random']
 
 const getCornersFromImageData = function (ctx, canvas) {
   const {width, height} = canvas
@@ -68,6 +67,8 @@ const getCornersFromImageData = function (ctx, canvas) {
 
     jsfeat.yape.detect(img_u8, corners, 0)
   }
+
+  console.warn('\nTOTAL CORNERS', corners.length, 'TAKEN', maxPoints, corners)
 
   corners = _.chain(corners).sortBy('score').reverse().take(maxPoints).value()
 
@@ -143,10 +144,44 @@ const getCornersFromImageData = function (ctx, canvas) {
     ctracker.init(pModel)
 
     let x = headTrackIterations
-    while (x--) {
+    while (x-- && (x > headTrackIterations / 2 || ctracker.getConvergence() > 0.5)) {
+      console.warn({x})
       ctracker.track(canvas)
     }
-    const trackerPositions = ctracker.getCurrentPosition()
+    let trackerPositions = ctracker.getScore() > 0.3 ? ctracker.getCurrentPosition() : []
+
+    if (trackerPositions.length) {
+      // remove teeth points
+      trackerPositions[61] = averagePoint(trackerPositions[61], trackerPositions[56])
+      trackerPositions[60] = averagePoint(trackerPositions[60], trackerPositions[57])
+      trackerPositions[59] = averagePoint(trackerPositions[59], trackerPositions[58])
+
+      // make the eyes a little bigger
+      _.forEach([23, 63, 24, 64, 25, 65, 26, 66], function(point) {
+        trackerPositions[point] = distancePoint(trackerPositions[27], trackerPositions[point], 1.06)
+      })
+
+      _.forEach([28, 29, 30, 31, 67, 68, 69, 70], function(point) {
+        trackerPositions[point] = distancePoint(trackerPositions[32], trackerPositions[point], 1.06)
+      })
+
+      // make the face a little smaller to prevent weird colors
+      _.forEach([0, 2, 3, 4, 6, 7, 8, 10, 11, 12, 14, 5, 9], function(point) {
+        trackerPositions[point] = distancePoint(trackerPositions[62], trackerPositions[point], 0.95)
+      })
+
+      // make the lips a little smaller too
+      _.forEach([45, 46, 47, 48, 49, 51, 52, 53, 54, 55], function(point) {
+        trackerPositions[point] = distancePoint(trackerPositions[60], trackerPositions[point], 0.95)
+      })
+
+      // remove unwanted points
+      let pointsToRemove = [1, 13, 42, 43, 19, 20, 21, 22, 18, 17, 16, 15, 56, 57, 58]
+      _.forEach(pointsToRemove, (point) => {
+        trackerPositions[point] = null
+      })
+      trackerPositions = _.compact(trackerPositions)
+    }
 
     _.forEach(trackerPositions, pos => {
       cornerArray.push(pos)
@@ -155,6 +190,20 @@ const getCornersFromImageData = function (ctx, canvas) {
   }
 
   return cornerArray
+}
+
+function averagePoint (a, b) {
+  return [
+    (a[0] + b[0]) / 2,
+    (a[1] + b[1]) / 2
+  ]
+}
+
+function distancePoint(origin, point, scale) {
+  return [
+    origin[0] + (point[0] - origin[0]) * scale,
+    origin[1] + (point[1] - origin[1]) * scale
+  ]
 }
 
 module.exports = getCornersFromImageData
